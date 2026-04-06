@@ -14,31 +14,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-    # Debug step to confirm we reached past checkout
+      # Debug step to confirm we reached past checkout
       - name: Debug echo
         run: echo "Reached after checkout step"
-
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
 
-   # Debug step to confirm Node.js installed
+      # Debug step to confirm Node.js installed
       - name: Verify Node.js version
         run: node -v
-
-
 
       - name: Install Newman
         run: npm install -g newman newman-reporter-htmlextra
 
       - name: Run Postman collection
         run: |
-    mkdir -p reports
-    newman run Indic_APIs.postman_collection.json \
-      -r cli,htmlextra \
-      --reporter-htmlextra-export reports/indic-api-report.html
+          mkdir -p reports
+          newman run Indic_APIs.postman_collection.json \
+            -r cli,htmlextra \
+            --reporter-htmlextra-export reports/indic-api-report.html
 
       - name: Upload Newman report
         if: always() # ensures report is uploaded even if tests fail
@@ -46,12 +43,13 @@ jobs:
         with:
           name: newman-report
           path: reports/indic-api-report.html
+
       - name: Deploy Newman report to GitHub Pages
         if: always()
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./reports
           publish_branch: gh-pages
+          publish_dir: ./reports
           destination_dir: indic-api
           keep_files: true
