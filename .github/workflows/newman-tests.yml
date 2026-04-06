@@ -34,14 +34,18 @@ jobs:
         run: npm install -g newman newman-reporter-htmlextra
 
       - name: Run Postman collection
-        run: newman run Indic_APIs.postman_collection.json -r cli,htmlextra --reporter-htmlextra-export newman-report.html
+        run: |
+    mkdir -p reports
+    newman run Indic_APIs.postman_collection.json \
+      -r cli,htmlextra \
+      --reporter-htmlextra-export reports/indic-api-report.html
 
       - name: Upload Newman report
         if: always() # ensures report is uploaded even if tests fail
         uses: actions/upload-artifact@v4
         with:
           name: newman-report
-          path: newman-report.html
+          path: reports/indic-api-report.html
       - name: Deploy Newman report to GitHub Pages
         if: always()
         uses: peaceiris/actions-gh-pages@v3
