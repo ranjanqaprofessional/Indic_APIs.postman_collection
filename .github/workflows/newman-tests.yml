@@ -46,7 +46,8 @@ jobs:
         if: always()
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }} 
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./reports
           publish_branch: gh-pages
-          publish_dir: .
+          destination_dir: indic-api
           keep_files: true
