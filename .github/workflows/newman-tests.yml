@@ -14,18 +14,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Debug step to confirm we reached past checkout
-      - name: Debug echo
-        run: echo "Reached after checkout step"
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-
-      # Debug step to confirm Node.js installed
-      - name: Verify Node.js version
-        run: node -v
 
       - name: Install Newman
         run: npm install -g newman newman-reporter-htmlextra
@@ -37,8 +29,11 @@ jobs:
             -r cli,htmlextra \
             --reporter-htmlextra-export reports/indic-api-report.html
 
+      - name: List reports folder
+        run: ls -R reports
+
       - name: Upload Newman report
-        if: always() # ensures report is uploaded even if tests fail
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: newman-report
