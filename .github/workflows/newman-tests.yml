@@ -1,0 +1,52 @@
+name: Newman API Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  run-newman:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+    # Debug step to confirm we reached past checkout
+      - name: Debug echo
+        run: echo "Reached after checkout step"
+
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+   # Debug step to confirm Node.js installed
+      - name: Verify Node.js version
+        run: node -v
+
+
+
+      - name: Install Newman
+        run: npm install -g newman newman-reporter-htmlextra
+
+      - name: Run Postman collection
+        run: newman run Indic_APIs.postman_collection.json -r cli,htmlextra --reporter-htmlextra-export newman-report.html
+
+      - name: Upload Newman report
+        if: always() # ensures report is uploaded even if tests fail
+        uses: actions/upload-artifact@v4
+        with:
+          name: newman-report
+          path: newman-report.html
+      - name: Deploy Newman report to GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }} 
+          publish_branch: gh-pages
+          publish_dir: .
+          keep_files: true
